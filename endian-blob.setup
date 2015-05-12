@@ -1,0 +1,20 @@
+;; -*- Hen -*-
+
+(define (dynld-name fn)		
+  (make-pathname #f fn ##sys#load-dynamic-extension))	
+
+(compile -O2 -d0 -s endian-blob.scm floatformat.c -j endian-blob)
+(compile -s endian-blob.import.scm)
+
+(install-extension
+
+ ;; Name of your extension:
+  'endian-blob
+
+  ;; Files to install for your extension:
+  `(,(dynld-name "endian-blob") ,(dynld-name "endian-blob.import") )
+  
+
+  ;; Assoc list with properties for your extension:
+  '((version 1.7)
+    ))

@@ -1,0 +1,29 @@
+;; -*- Hen -*-
+
+((egg "endian-blob.egg") ; This should never change
+
+ ; List here all the files that should be bundled as part of your egg.  
+
+ (files "endian-blob.setup" "endian-blob.scm" "floatformat.h" "floatformat.c" "endian-blob.meta" "tests")
+
+ ; Your egg's license:
+
+ (license "GPL-3")
+
+ ; Pick one from the list of categories (see below) for your egg and
+ ; enter it here.
+
+ (category data)
+
+ ; A list of eggs endian-blob depends on.
+
+ (needs byte-blob)
+
+ (test-depends test)
+
+ (doc-from-wiki)
+
+ (author "Ivan Raikov")
+
+ (synopsis "Endian-specific procedures for converting blobs to numeric values and vectors."))
+
