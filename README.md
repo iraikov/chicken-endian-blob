@@ -1,16 +1,9 @@
-[[tags: eggs]]
-[[toc:]]
+# endian-blob
 
-== endian-blob
+`endian-blob` is a library of endian-specific procedures for
+converting blobs to numeric values and vectors.
 
-=== Description
-
-{{endian-blob}} is a library of endian-specific procedures for
-converting blobs to numeric values and vectors. 
-
-=== Library Procedures
-
-==== Predicates and constants
+## Predicates and constants
 
 <procedure>(endian-blob? X) => BOOL</procedure>
 
@@ -23,14 +16,14 @@ otherwise.
 These constants specify most-significant or least-significant byte
 order, respectively.
 
-==== Converting to and from byte blobs
+## Converting to and from byte blobs
 
 <procedure>(byte-blob->endian-blob BYTE-BLOB BYTE-ORDER)</procedure>
 
 Returns an endian blob containing the given byte-blob. Argument
 {{BYTE-ORDER}} is one of {{MSB}} or {{LSB}}.
 
-==== Converting to and from numbers and numeric vectors 
+## Converting to and from numbers and numeric vectors 
 
 <procedure>(endian-blob->sint1 ENDIAN-BLOB) => NUMBER</procedure><br>
 <procedure>(endian-blob->sint2 ENDIAN-BLOB) => NUMBER</procedure><br>
@@ -94,7 +87,7 @@ SRFI-4 vector type. Optional argument {{MODE}} indicates the
 endianness of the resulting endian blob and can be one of {{MSBB}} or
 {{LSB}}.  Default is {{MSB}}.
 
-=== Version History
+## Version History
 
 * 1.4 Removed dependency on ansidecl.h (thanks to Peter Bex)
 * 1.3 Added procedure endian-blob-length
@@ -102,23 +95,24 @@ endianness of the resulting endian blob and can be one of {{MSBB}} or
 * 1.1 Some small optimizations
 * 1.0 Initial release
 
-=== License
+## License
 
-Copyright 2009-2012 Ivan Raikov.
-
-endian-port is based on routines from the C++ advanced I/O library and
-TIFF reader written by Oleg Kiselyov, as well as the floating-point
-I/O routines from GDB.
-
-endian-port is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at
-your option) any later version.
-
-endian-port is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-
-A full copy of the GPL license can be found at
-<http://www.gnu.org/licenses/>.
+> Copyright 2009-2015 Ivan Raikov.
+> 
+> endian-blob is based on routines from the C++ advanced I/O library and
+> TIFF reader written by Oleg Kiselyov, as well as the floating-point
+> I/O routines from GDB.
+> 
+> This program is free software: you can redistribute it and/or modify
+> it under the terms of the GNU General Public License as published by
+> the Free Software Foundation, either version 3 of the License, or (at
+> your option) any later version.
+> 
+> This program is distributed in the hope that it will be useful, but
+> WITHOUT ANY WARRANTY; without even the implied warranty of
+> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+> General Public License for more details.
+> 
+>  A full copy of the GPL license can be found at
+>  <http://www.gnu.org/licenses/>.
+>
