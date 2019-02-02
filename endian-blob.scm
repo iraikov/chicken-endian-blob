@@ -2,7 +2,7 @@
 ;;  Utility procedures for manipulating blobs in different endian
 ;;  formats.
 ;;
-;;  Copyright 2009-2015 Ivan Raikov.
+;;  Copyright 2009-2019 Ivan Raikov.
 ;;
 ;;
 ;; This program is free software: you can redistribute it and/or
@@ -65,9 +65,8 @@
 	 )
 
 
-	(import scheme chicken foreign)
-
-	(require-extension srfi-4 byte-blob)
+	(import scheme (chicken base) (chicken foreign)
+                srfi-4 byte-blob)
 
 (define-record-type endian-blob
   (make-endian-blob object mode )
@@ -634,7 +633,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (sint1->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (s8vector->blob/shared (s8vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_sint1 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -642,7 +641,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (sint2->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (s16vector->blob/shared (s16vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_sint2 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -650,7 +649,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (sint4->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (s32vector->blob/shared (s32vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_sint4 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -658,7 +657,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (uint1->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (u8vector->blob/shared (u8vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_uint1 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -666,7 +665,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (uint2->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (u16vector->blob/shared (u16vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_uint2 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -674,7 +673,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (uint4->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (u32vector->blob/shared (u32vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_uint4 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -682,7 +681,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (ieee_float32->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (f32vector->blob/shared (f32vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_ieee_float32 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
@@ -690,14 +689,14 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 (define (ieee_float64->endian-blob n . rest)
   (let-optionals rest ((mode MSB))
     (let ((bb (f64vector->blob/shared (f64vector n))))
-      (if (not (fx= machine-mode mode))
+      (if (not (= machine-mode mode))
 	  (from_ieee_float64 n bb 0 mode))
       (make-endian-blob (blob->byte-blob bb) mode))))
 
 
 (define (s8vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-   (if (fx= machine-mode mode) 
+   (if (= machine-mode mode) 
        (make-endian-blob (s8vector->byte-blob v) mode)
        (let* ((n  (s8vector-length v))
 	      (bb (byte-blob-replicate n 0))
@@ -710,7 +709,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (s16vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-   (if (fx= machine-mode mode) 
+   (if (= machine-mode mode) 
        (make-endian-blob (s16vector->byte-blob v) mode)
        (let* ((n  (s16vector-length v))
 	      (bb (byte-blob-replicate (* 2 n) 0))
@@ -723,7 +722,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (s32vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-   (if (fx= machine-mode mode) 
+   (if (= machine-mode mode) 
        (make-endian-blob (s32vector->byte-blob v) mode)
        (let* ((n  (s32vector-length v))
 	      (bb (byte-blob-replicate (* 4 n) 0))
@@ -735,7 +734,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (u8vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-   (if (fx= machine-mode mode) 
+   (if (= machine-mode mode) 
        (make-endian-blob (u8vector->byte-blob v) mode)
        (let* ((n  (u8vector-length v))
 	      (bb (byte-blob-replicate n 0))
@@ -748,7 +747,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (u16vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(make-endian-blob (u16vector->byte-blob v) mode)
 	(let* ((n  (u16vector-length v))
 	       (bb (byte-blob-replicate (* 2 n) 0))
@@ -761,7 +760,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (u32vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
        (make-endian-blob (u32vector->byte-blob v) mode)
        (let* ((n  (u32vector-length v))
 	      (bb (byte-blob-replicate (* 4 n) 0))
@@ -774,7 +773,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (f32vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(make-endian-blob (f32vector->byte-blob v) mode)
 	(let* ((n  (f32vector-length v))
 	       (bb (byte-blob-replicate (* 4 n) 0))
@@ -787,7 +786,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 
 (define (f64vector->endian-blob v . rest)
   (let-optionals rest ((mode MSB))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(make-endian-blob (f64vector->byte-blob v) mode)
 	(let* ((n  (f64vector-length v))
 	       (bb (byte-blob-replicate (* 8 n) 0))
@@ -857,7 +856,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (positive? n))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	 (byte-blob->s8vector bb)
 	 (let ((v (make-s8vector n 0)))
 	   (to_s8vector n v 
@@ -872,7 +871,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 2))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	 (byte-blob->s16vector bb)
 	 (let* ((s  (/ n 2))
 		(v (make-s16vector s 0)))
@@ -888,7 +887,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 4))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	 (byte-blob->s32vector bb)
 	 (let* ((s  (/ n 4))
 		(v (make-s32vector s 0)))
@@ -903,7 +902,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (positive? n))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(byte-blob->u8vector bb)
 	(let ((v (make-u8vector n 0)))
 	  (to_u8vector n v 
@@ -918,7 +917,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 2))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(byte-blob->u16vector bb)
 	(let* ((s  (/ n 2))
 	       (v (make-u16vector s 0)))
@@ -934,7 +933,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 4))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	(byte-blob->u32vector bb)
 	(let* ((s  (/ n 4))
 	       (v (make-u32vector s 0)))
@@ -950,7 +949,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 4))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	 (byte-blob->f32vector bb)
 	 (let* ((s  (/ n 4))
 		(v (make-f32vector s 0)))
@@ -966,7 +965,7 @@ void cto_f64vector (unsigned int n, double *v, unsigned char *b, unsigned int of
 	 (mode (endian-blob-mode b))
 	 (n  (byte-blob-length bb)))
     (assert (and (positive? n) (zero? (modulo n 8))))
-    (if (fx= machine-mode mode) 
+    (if (= machine-mode mode) 
 	 (byte-blob->f64vector bb)
 	 (let* ((s  (/ n 8))
 		(v (make-f64vector s 0)))

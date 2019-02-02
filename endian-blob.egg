@@ -1,0 +1,13 @@
+;; -*- Scheme -*-
+
+(
+ (synopsis "Endian-specific procedures for converting blobs to numeric values and vectors.")
+ (license "GPL-3")
+ (category data)
+ (dependencies byte-blob)
+ (test-dependencies test)
+ (author "Ivan Raikov")
+ (components (extension endian-blob
+                        (custom-build "build.sh")))
+ )
+

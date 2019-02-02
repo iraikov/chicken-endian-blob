@@ -1,5 +1,5 @@
 
-(use srfi-4 endian-blob test)
+(import scheme (chicken base) (chicken format) srfi-4 endian-blob test)
 
 
 (test-group "endian-blob test"
