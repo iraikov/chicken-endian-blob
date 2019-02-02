@@ -97,7 +97,7 @@ endianness of the resulting endian blob and can be one of {{MSBB}} or
 
 ## License
 
-> Copyright 2009-2015 Ivan Raikov.
+> Copyright 2009-2019 Ivan Raikov.
 > 
 > endian-blob is based on routines from the C++ advanced I/O library and
 > TIFF reader written by Oleg Kiselyov, as well as the floating-point
