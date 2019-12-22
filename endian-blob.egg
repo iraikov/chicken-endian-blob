@@ -7,7 +7,8 @@
  (dependencies byte-blob)
  (test-dependencies test)
  (author "Ivan Raikov")
- (components (extension endian-blob
-                        (custom-build "build.sh")))
+ (components (c-object floatformat)
+             (extension endian-blob
+                        (objects floatformat)))
  )
 
