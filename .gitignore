@@ -1,4 +1,9 @@
 *.swp
 *.so
 a.out
-endian-blob.import.scm
+endian-sequence.import.scm
+*.o
+*.a
+*.link
+*.build.sh
+*.install.sh

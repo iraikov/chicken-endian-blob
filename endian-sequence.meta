@@ -1,0 +1,26 @@
+;; -*- Hen -*-
+
+((egg "endian-sequence.egg") ; This should never change
+
+ ; List here all the files that should be bundled as part of your egg.
+
+ (files "endian-sequence.scm" "floatformat.h" "floatformat.c" "endian-sequence.meta" "tests")
+
+ ; Your egg's license:
+
+ (license "GPL-3")
+
+ ; Pick one from the list of categories (see below) for your egg and
+ ; enter it here.
+
+ (category data)
+
+ ; A list of eggs endian-sequence depends on.
+
+ (needs byte-sequence)
+
+ (test-depends test)
+
+ (author "Ivan Raikov")
+
+ (synopsis "Endian-specific procedures for converting byte sequences to numeric values and vectors."))

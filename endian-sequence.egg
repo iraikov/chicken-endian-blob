@@ -1,14 +1,13 @@
 ;; -*- Scheme -*-
 
 (
- (synopsis "Endian-specific procedures for converting blobs to numeric values and vectors.")
+ (synopsis "Endian-specific procedures for converting byte sequences to numeric values and vectors.")
  (license "GPL-3")
  (category data)
- (dependencies byte-blob)
+ (dependencies byte-sequence)
  (test-dependencies test)
  (author "Ivan Raikov")
  (components (c-object floatformat)
-             (extension endian-blob
+             (extension endian-sequence
                         (objects floatformat)))
  )
-
