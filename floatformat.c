@@ -366,9 +366,39 @@ floatformat_to_double (const struct floatformat *fmt,
 
   exponent = get_field (ufrom, fmt->byteorder, fmt->totalsize,
 			fmt->exp_start, fmt->exp_len);
-  /* Note that if exponent indicates a NaN, we can't really do anything useful
-     (not knowing if the host has NaN's, or how to build one).  So it will
-     end up as an infinity or something close; that is OK.  */
+
+  /* An all-ones exponent denotes an infinity (zero mantissa) or a NaN
+     (non-zero mantissa).  Formats with an explicit integer bit ignore
+     that bit when making the distinction.  Formats whose exp_nan is
+     zero (VAX) have no such values.  */
+  if (fmt->exp_nan != 0 && exponent == fmt->exp_nan)
+    {
+      int is_nan = 0;
+
+      mant_off = fmt->man_start;
+      mant_bits_left = fmt->man_len;
+      if (fmt->intbit == floatformat_intbit_yes)
+	{
+	  mant_off++;
+	  mant_bits_left--;
+	}
+      while (mant_bits_left > 0)
+	{
+	  mant_bits = min (mant_bits_left, 32);
+	  if (get_field (ufrom, fmt->byteorder, fmt->totalsize,
+			 mant_off, mant_bits) != 0)
+	    is_nan = 1;
+	  mant_off += mant_bits;
+	  mant_bits_left -= mant_bits;
+	}
+
+      dto = is_nan ? NAN : INFINITY;
+      if (get_field (ufrom, fmt->byteorder, fmt->totalsize,
+		     fmt->sign_start, 1))
+	dto = -dto;
+      *to = dto;
+      return;
+    }
 
   mant_bits_left = fmt->man_len;
   mant_off = fmt->man_start;
@@ -445,11 +475,13 @@ put_field (unsigned char *data, enum floatformat_byteorders order,
     }
   if (cur_bitshift > -FLOATFORMAT_CHAR_BIT)
     {
-      *(data + cur_byte) &=
-	~(((1 << ((start + len) % FLOATFORMAT_CHAR_BIT)) - 1)
-	  << (-cur_bitshift));
-      *(data + cur_byte) |=
-	(stuff_to_put & ((1 << FLOATFORMAT_CHAR_BIT) - 1)) << (-cur_bitshift);
+      /* The field occupies FIRST_BITS bits of this byte, starting at
+	 bit -CUR_BITSHIFT.  */
+      unsigned int first_bits = min (len, FLOATFORMAT_CHAR_BIT + cur_bitshift);
+      unsigned int first_mask = (1u << first_bits) - 1;
+
+      *(data + cur_byte) &= ~(first_mask << (-cur_bitshift));
+      *(data + cur_byte) |= (stuff_to_put & first_mask) << (-cur_bitshift);
     }
   cur_bitshift += FLOATFORMAT_CHAR_BIT;
   if (order == floatformat_little || order == floatformat_littlebyte_bigword)
@@ -507,9 +539,15 @@ double_to_floatformat (const struct floatformat *fmt,
       /* From is NaN */
       put_field (uto, fmt->byteorder, fmt->totalsize, fmt->exp_start,
 		 fmt->exp_len, fmt->exp_nan);
-      /* Be sure it's not infinity, but NaN value is irrel */
-      put_field (uto, fmt->byteorder, fmt->totalsize, fmt->man_start,
-		 32, 1);
+      /* Be sure it's not infinity: set the most significant fraction
+	 bit (a quiet NaN), along with the integer bit if the format
+	 stores it explicitly.  */
+      if (fmt->intbit == floatformat_intbit_yes)
+	put_field (uto, fmt->byteorder, fmt->totalsize, fmt->man_start,
+		   2, 3);
+      else
+	put_field (uto, fmt->byteorder, fmt->totalsize, fmt->man_start,
+		   1, 1);
       return;
     }
 

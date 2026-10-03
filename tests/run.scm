@@ -164,5 +164,70 @@
 		   (byte-sequence->endian-sequence
 		    (byte-sequence-drop (list->byte-sequence (list 9 1 2 3 4)) 1) LSB)))
 
-	    
+
 )
+
+(define (same-float? a b)
+  (if (nan? a) (nan? b) (and (= a b) (eq? (negative? a) (negative? b)))))
+
+(define (same-float-list? as bs)
+  (and (= (length as) (length bs))
+       (let loop ((as as) (bs bs))
+         (or (null? as)
+             (and (same-float? (car as) (car bs))
+                  (loop (cdr as) (cdr bs)))))))
+
+(test-group "IEEE special values"
+
+            (for-each
+             (lambda (mode name)
+               (for-each
+                (lambda (x)
+                  (test-assert (sprintf "ieee_float32 ~A <-> endian-sequence (~A)" x name)
+                               (same-float? x (endian-sequence->ieee_float32
+                                               (ieee_float32->endian-sequence x mode))))
+                  (test-assert (sprintf "ieee_float64 ~A <-> endian-sequence (~A)" x name)
+                               (same-float? x (endian-sequence->ieee_float64
+                                               (ieee_float64->endian-sequence x mode)))))
+                (list +inf.0 -inf.0 +nan.0))
+
+               (test-assert (sprintf "f32vector with specials <-> endian-sequence (~A)" name)
+                            (same-float-list?
+                             (list +inf.0 -inf.0 +nan.0 1.5)
+                             (f32vector->list
+                              (endian-sequence->f32vector
+                               (f32vector->endian-sequence (f32vector +inf.0 -inf.0 +nan.0 1.5) mode)))))
+
+               (test-assert (sprintf "f64vector with specials <-> endian-sequence (~A)" name)
+                            (same-float-list?
+                             (list +inf.0 -inf.0 +nan.0 1.5)
+                             (f64vector->list
+                              (endian-sequence->f64vector
+                               (f64vector->endian-sequence (f64vector +inf.0 -inf.0 +nan.0 1.5) mode))))))
+             (list MSB LSB)
+             (list "MSB" "LSB"))
+
+            (test-assert "ieee_float32 NaN from raw bytes (MSB)"
+                         (nan? (endian-sequence->ieee_float32
+                                (byte-sequence->endian-sequence
+                                 (list->byte-sequence (list #x7f #xc0 0 0)) MSB))))
+
+            (test-assert "ieee_float32 -inf from raw bytes (LSB)"
+                         (same-float? -inf.0
+                                      (endian-sequence->ieee_float32
+                                       (byte-sequence->endian-sequence
+                                        (list->byte-sequence (list 0 0 #x80 #xff)) LSB))))
+
+            (test-assert "ieee_float64 NaN with low mantissa bit only (MSB)"
+                         (nan? (endian-sequence->ieee_float64
+                                (byte-sequence->endian-sequence
+                                 (list->byte-sequence (list #x7f #xf0 0 0 0 0 0 1)) MSB))))
+
+            (test-assert "ieee_float64 +inf from raw bytes (MSB)"
+                         (same-float? +inf.0
+                                      (endian-sequence->ieee_float64
+                                       (byte-sequence->endian-sequence
+                                        (list->byte-sequence (list #x7f #xf0 0 0 0 0 0 0)) MSB))))
+)
+
+(test-exit)
